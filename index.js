@@ -32,9 +32,24 @@ async function run() {
         await client.connect();
 
         const menuCollection = client.db('FlavorFusion').collection('menus');
+        const reviewsCollection = client.db('FlavorFusion').collection('reviews');
+        const cartCollection = client.db('FlavorFusion').collection('carts');
 
         app.get('/menus', async (req, res) => {
             const result = await menuCollection.find().toArray();
+            res.send(result);
+        })
+        
+        app.get('/reviews', async (req, res) => {
+            const result = await reviewsCollection.find().toArray();
+            res.send(result);
+        })
+
+        // cart API's
+
+        app.post('/carts', async(req, res) => {
+            const item = req.body
+            const result = await cartCollection.insertOne(item);
             res.send(result);
         })
 
