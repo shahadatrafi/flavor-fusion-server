@@ -34,12 +34,14 @@ async function run() {
         const menuCollection = client.db('FlavorFusion').collection('menus');
         const reviewsCollection = client.db('FlavorFusion').collection('reviews');
         const cartCollection = client.db('FlavorFusion').collection('carts');
+        const usersCollection = client.db('FlavorFusion').collection('users');
+
 
         app.get('/menus', async (req, res) => {
             const result = await menuCollection.find().toArray();
             res.send(result);
         })
-        
+
         app.get('/reviews', async (req, res) => {
             const result = await reviewsCollection.find().toArray();
             res.send(result);
@@ -61,12 +63,28 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await cartCollection.deleteOne(query)
+            res.send(result);
         })
 
-        app.post('/carts', async(req, res) => {
+        app.post('/carts', async (req, res) => {
             const item = req.body
             const result = await cartCollection.insertOne(item);
             res.send(result);
+        })
+
+        // users apis'
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const query = { email: user.email }
+            const exitingUser = await usersCollection.findOne(query);
+            console.log(exitingUser);
+            if (exitingUser) {
+                return res.send('User Already Exit')
+            }
+            const result = await usersCollection.insertOne(user);
+            res.send(result)
         })
 
         // Send a ping to confirm a successful connection
